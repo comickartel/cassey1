@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LyricerPixel | Next-Gen Lyrics & Videos</title>
+    <style>
+        /* --- CSS STYLING & CORE VARIABLES --- */
+        :root {
+            --primary: #00f3ff;
+            --secondary: #ff007f;
+            --bg-dark: #0a0a16;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-muted: #8fa0dd;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- COOL BACKGROUND CANVAS EFFECT --- */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- APP WRAPPER & LAYOUT --- */
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* --- INTERACTIVE SEARCH BAR --- */
+        .search-wrapper {
+            max-width: 600px;
+            margin: 0 auto 40px auto;
+            position: relative;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 18px 25px;
+            font-size: 1.1rem;
+            background: rgba(15, 15, 35, 0.6);
+            border: 2px solid var(--glass-border);
+            border-radius: 50px;
+            color: white;
+            outline: none;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .search-box:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.4), inset 0 0 10px rgba(0, 243, 255, 0.2);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: opacity 0.3s;
+        }
+
+        .search-btn:hover {
+            opacity: 0.9;
+            box-shadow: 0 0 15px var(--secondary);
+        }
+
+        /* --- DYNAMIC CONTENT CORE GRID --- */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .main-content.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- GLASSMORPHISM CARDS --- */
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 10px;
+        }
+
+        /* --- VIDEO PANEL FRAME --- */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            background: #000;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .song-details {
+            margin-top: 20px;
+        }
+
+        .song-title-display {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .artist-display {
+            color: var(--secondary);
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        /* --- LYRICS PANEL CONTAINER --- */
+        .lyrics-box {
+            white-space: pre-line;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 15px;
+            color: #e2e8f0;
+        }
+
+        /* Fancy Scrollbar */
+        .lyrics-box::-webkit-scrollbar {
+            width: 6px;
+        }
+        .lyrics-box::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.02);
+        }
+        .lyrics-box::-webkit-scrollbar-thumb {
+            background: var(--glass-border);
+            border-radius: 10px;
+        }
+        .lyrics-box::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* Empty State Handler */
+        .status-message {
+            text-align: center;
+            color: var(--text-muted);
+            margin-top: 50px;
+            font-size: 1.2rem;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Dynamic Background Matrix Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="app-container">
+        <header>
+            <div class="logo">LyricerPixel</div>
+            <div class="tagline">The Ultimate Cyber-Nexus for Lyrics &amp; Official Music Videos</div>
+        </header>
+
+        <!-- Search Feature -->
+        <div class="search-wrapper">
+            <input type="text" id="search-input" class="search-box" placeholder="Enter song name or artist... (try 'Blinding Lights' or 'Starboy')">
+            <button id="search-btn" class="search-btn">SEARCH</button>
+        </div>
+
+        <!-- Initial Placeholder Message -->
+        <div id="status-msg" class="status-message">
+            ⚡ Awaiting systemic synchronization... Input target metrics above.
+        </div>
+
+        <!-- Hidden Output Grid Component -->
+        <div id="content-grid" class="main-content">
+            
+            <!-- Video Presentation Module -->
+            <div class="card">
+                <div class="card-title">🎬 Official Video Broadcast</div>
+                <div class="video-container">
+                    <iframe id="video-frame" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <div class="song-details">
+                    <div id="song-title" class="song-title-display">Song Title</div>
+                    <div id="song-artist" class="artist-display">Artist Name</div>
+                </div>
+            </div>
+
+            <!-- Lyrics Presentation Module -->
+            <div class="card">
+                <div class="card-title">🎤 Decrypted Audio Lyrics</div>
+                <div id="lyrics-content" class="lyrics-box">
+                    Loading lyric data nodes...
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- --- JAVASCRIPT LOGIC & ANIMATION --- -->
+    <script>
+        /* 1. ANIMATED BG MATRIX EFFECT (HTML5 CANVAS) */
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        // Particle Node definitions
+        const particles = [];
+        const particleCount = 65;
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                radius: Math.random() * 2 + 1,
+                speedX: (Math.random() - 0.5) * 0.5,
+                speedY: (Math.random() - 0.5) * 0.5,
+                alpha: Math.random() * 0.5 + 0.2
+            });
+        }
+
+        function animateBg() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#0a0a16';
+            ctx.fillRect(0, 0, width, height);
+
+            particles.forEach(p => {
+                p.x += p.speedX;
+                p.y += p.speedY;
+
+                // Infinite loop wrap boundaries
+                if (p.x < 0) p.x = width;
+                if (p.x > width) p.x = 0;
+                if (p.y < 0) p.y = height;
+                if (p.y > height) p.y = 0;
+
