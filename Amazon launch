@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Intelligence & Asset Ledger Matrix</title>
+    <style>
+        /* CSS Core Architecture & Global Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg-matrix: #030712;
+            --bg-panel: #0b0f19;
+            --bg-panel-active: #111827;
+            --border-matrix: #1f2937;
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            
+            /* High-Contrast Cyber Threat Accents */
+            --glow-amazon: #ff9900;
+            --glow-cyber: #00ff66;
+            --glow-darknet: #ef4444;
+            --glow-crypto: #3b82f6;
+        }
+
+        body {
+            background-color: var(--bg-matrix);
+            background-image: 
+                radial-gradient(circle at 50% -20%, rgba(0, 255, 102, 0.07) 0%, transparent 50%),
+                radial-gradient(circle at 10% 80%, rgba(239, 68, 68, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 40%, rgba(255, 153, 0, 0.05) 0%, transparent 45%);
+            color: var(--text-primary);
+            font-family: "Courier New", Courier, monospace, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        /* Matrix Shell Layout */
+        .shell {
+            width: 100%;
+            max-w: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* Terminal System Header */
+        .terminal-header {
+            border-bottom: 2px dashed var(--border-matrix);
+            padding-bottom: 20px;
+            position: relative;
+        }
+
+        .terminal-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            text-transform: uppercase;
+            color: var(--text-primary);
+        }
+
+        .terminal-header h1 span {
+            color: var(--glow-cyber);
+            text-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
+        }
+
+        .terminal-header p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 6px;
+        }
+
+        /* Responsive Operational Data Grid */
+        .grid-matrix {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .grid-matrix {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .grid-matrix {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* Interactive Cyber Node Modules */
+        .node-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-matrix);
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+        }
+
+        .node-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--border-matrix);
+            transition: background 0.3s ease;
+        }
+
+        /* Dynamic Visual Overrides Per Node Theme */
+        .node-amazon:hover::before { background: var(--glow-amazon); }
+        .node-amazon:hover { border-color: var(--glow-amazon); box-shadow: 0 10px 30px rgba(255, 153, 0, 0.08); }
+
+        .node-cyber:hover::before { background: var(--glow-cyber); }
+        .node-cyber:hover { border-color: var(--glow-cyber); box-shadow: 0 10px 30px rgba(0, 255, 102, 0.08); }
+
+        .node-darknet:hover::before { background: var(--glow-darknet); }
+        .node-darknet:hover { border-color: var(--glow-darknet); box-shadow: 0 10px 30px rgba(239, 68, 68, 0.08); }
+
+        .node-crypto:hover::before { background: var(--glow-crypto); }
+        .node-crypto:hover { border-color: var(--glow-crypto); box-shadow: 0 10px 30px rgba(59, 130, 246, 0.08); }
+
+        /* Module Metadata & Indicators */
+        .node-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .tag-active { color: var(--glow-cyber); display: flex; align-items: center; gap: 4px;}
+        .tag-active::before { content: ''; width: 6px; height: 6px; background: var(--glow-cyber); border-radius: 50%; box-shadow: 0 0 6px var(--glow-cyber); }
+        
+        .tag-locked { color: var(--glow-darknet); display: flex; align-items: center; gap: 4px;}
+        .tag-locked::before { content: ''; width: 6px; height: 6px; background: var(--glow-darknet); border-radius: 50%; box-shadow: 0 0 6px var(--glow-darknet); }
+
+        .node-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .node-desc {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        /* Hardware Metrics & Logs display */
+        .metric-ticker {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 0.75rem;
+            color: #34d399;
+            margin-bottom: 20px;
+            font-family: monospace;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        /* Native Cyberpunk Action Controls */
+        .trigger-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-radius: 6px;
+            text-decoration: none;
+            background: transparent;
+            border: 1px solid var(--border-matrix);
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+
+        .node-amazon .trigger-link:hover { background: var(--glow-amazon); color: #000; border-color: var(--glow-amazon); }
+        .node-cyber .trigger-link:hover { background: var(--glow-cyber); color: #000; border-color: var(--glow-cyber); }
+        .node-darknet .trigger-link:hover { background: var(--glow-darknet); color: #fff; border-color: var(--glow-darknet); }
+        .node-crypto .trigger-link:hover { background: var(--glow-crypto); color: #fff; border-color: var(--glow-crypto); }
+    </style>
+</head>
+<body>
+
+    <div class="shell">
+        <!-- Terminal System Header -->
+        <header class="terminal-header">
+            <h1>Platform Gateway <span>[SECURE_SHELL]</span></h1>
+            <p>Unified infrastructure control matrix for cloud compute, security perimeters, and financial flow structures.</p>
+        </header>
+
+        <!-- Operational Interface Grid -->
+        <div class="grid-matrix">
+            
+            <!-- Amazon Web Services / Cloud Architecture Node -->
+            <div class="node-card node-amazon">
+                <div>
+                    <div class="node-meta">
+                        <span>Node: AWS_CLOUD</span>
+                        <span class="tag-active">Live</span>
+                    </div>
+                    <h2 class="node-title" style="color: var(--glow-amazon);">Amazon Cloud</h2>
+                    <p class="node-desc">Provision global computing clusters, isolate storage grids, and scale enterprise virtual architecture.</p>
+                </div>
+                <div>
+                    <div class="metric-ticker">S3_BUCKET: 200 OK // 0ms_LATENCY</div>
+                    <a href="https://amazon.com" target="_blank" rel="noopener noreferrer" class="trigger-link">Deploy Infrastructure</a>
+                </div>
+            </div>
+
+            <!-- Cyber Security & Defensive Network Node -->
+            <div class="node-card node-cyber">
+                <div>
+                    <div class="node-meta">
+                        <span>Node: DEF_WALL</span>
+                        <span class="tag-active">Protected</span>
+                    </div>
+                    <h2 class="node-title" style="color: var(--glow-cyber);">Defensive Wall</h2>
+                    <p class="node-desc">Audit network firewalls, perform white-hat vulnerability scans, and implement continuous traffic inspection rules.</p>
+                </div>
+                <div>
+                    <div class="metric-ticker">DDoS_MITIGATION: ACTIVE [0_THREATS]</div>
+                    <a href="https://kali.org" target="_blank" rel="noopener noreferrer" class="trigger-link">Initialize Core Scan</a>
+                </div>
+            </div>
+
+            <!-- Bug Bounty / Penetration Testing Intel Node -->
+            <div class="node-card node-darknet">
+                <div>
+                    <div class="node-meta">
+                        <span>Node: BOUNTY_INTEL</span>
+                        <span class="tag-locked">Encrypted</span>
+                    </div>
+                    <h2 class="node-title" style="color: var(--glow-darknet);">Bug Bounty Matrix</h2>
